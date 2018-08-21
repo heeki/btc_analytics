@@ -1,6 +1,8 @@
 import json
 from utils.util import Util
 from utils.utilsocket import UtilSocket
+from btc.block import Block
+from btc.transaction import Transaction
 
 
 def main():
@@ -10,25 +12,30 @@ def main():
     url_raw_block = "https://blockchain.info/rawblock/"
     url_raw_tx = "https://blockchain.info/rawtx/"
 
-    usocket = UtilSocket(url)
+    with UtilSocket(url) as usocket:
+        # blocks
+        ping_block = {
+            "op": "ping_block"
+        }
+        log.info("message_payload={}".format(json.dumps(ping_block)))
 
-    ping = {
-        "op": "ping_block"
-    }
-    log.info("message_payload={}".format(json.dumps(ping)))
+        response = usocket.send(json.dumps(ping_block))
+        block = Block(response)
+        # log.info("block.repr={}".format(repr(block)))
+        log.info("block.str={}".format(str(block)))
 
-    response = usocket.send(json.dumps(ping))
-    log.info("ping_response={}".format(response))
+        # transactions
+        ping_tx = {
+            "op": "ping_tx"
+        }
+        log.info("message_payload={}".format(json.dumps(ping_tx)))
 
-    block = json.loads(response)
-    log.info("tx_count={}".format(len(block["x"]["txIndexes"])))
-    log.info("nTx={}".format(block["x"]["nTx"]))
-    log.info("totalBTCSent={}".format(block["x"]["totalBTCSent"]/100000000))
-    log.info("height={}".format(block["x"]["height"]))
-    log.info("foundBy.link={}".format(block["x"]["foundBy"]["link"]))
-
-    block_tx_id = block["x"]["foundBy"]["link"].split("/")[-1]
-    log.info("block_tx_id={}".format(block_tx_id))
+        response = usocket.send(json.dumps(ping_tx))
+        tx = Transaction(response)
+        # log.info("tx.repr={}".format(repr(tx)))
+        log.info("tx.str={}".format(str(tx)))
+        log.info("tx.input_values={}".format(tx.input_values))
+        log.info("tx.output_values={}".format(tx.output_values))
 
 
 if __name__ == "__main__":

@@ -9,13 +9,19 @@ class UtilSocket:
     def __init__(self, url):
         self.log = Util.get_logger("UtilSocket")
         self.host = url
+
+    def __enter__(self):
         self.log.info("initiating connection to {}".format(self.host))
         self.ws = websocket.create_connection(self.host)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.log.info("closing connection to {}".format(self.host))
+        self.ws.close()
 
     def send(self, msg):
         self.ws.send(msg)
         result = self.ws.recv()
-        self.ws.close()
         return result
 
     def forever(self):
