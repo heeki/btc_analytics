@@ -17,8 +17,14 @@ class Block:
         return self.payload
 
     def __str__(self):
-        return "height={}, total_tx={}, total_btc_sent={}, found_by_link={}, found_by_tx_id={}"\
-            .format(self.height, self.total_tx, self.total_btc_sent, self.found_by_link, self.found_by_tx_id)
+        values = {
+            'height': self.height,
+            'total_tx': self.total_tx,
+            'total_btc_sent': self.total_btc_sent,
+            'found_by_link': self.found_by_link,
+            'found_by_tx_id': self.found_by_tx_id
+        }
+        return json.dumps(values)
 
     def dict(self):
         return json.loads(self.payload)["x"]

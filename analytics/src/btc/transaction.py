@@ -17,8 +17,12 @@ class Transaction:
         return self.payload
 
     def __str__(self):
-        return "size={}, input_count={}, output_count={}"\
-            .format(self.size, self.input_count, self.output_count)
+        values = {
+            'size': self.size,
+            'input_count': self.input_count,
+            'output_count': self.output_count
+        }
+        return json.dumps(values)
 
     def dict(self):
         return json.loads(self.payload)["x"]
